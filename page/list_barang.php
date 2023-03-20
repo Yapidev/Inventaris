@@ -4,9 +4,10 @@
 
 <a href="?p=tambah_barang" class="btn btn-md btn-primary"><span class="glyphicon glyphicon-plus
 "></span></a>
-<form class="navbar-form navbar-right" role="search">
+<form class="navbar-form navbar-right" role="search" method="get">
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Cari Barang">
+          <input type="hidden" name="p" value="list_barang">
+          <input type="text" class="form-control" placeholder="Cari Barang" name="cari">
         </div>
         <button type="submit" class="btn btn-default">Cari</button>
       </form>
@@ -25,20 +26,41 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>1</td>
-            <td>L001</td>
-            <td>Laptop</td>
-            <td>Baik</td>
-            <td>50</td>
-            <td>LAB RPL</td>
-            <td>19-11-2021</td>
-            <td>Barang di dapat dari bantuan provinsi</td>
-            <td>
+    <?php
+      @$cari = $_GET['cari'];
+      $q_cari = "";
+      if (!empty($cari)){
+        $q_cari .= "and nama like '%" . $cari . "'%";
+
+      }
+
+      $sql = "SELECT * FROM inventaris LEFT JOIN ruang ON ruang.id_ruang = inventaris.id_ruang WHERE 1=1 $q_cari";
+      $query = mysqli_query($koneksi, $sql);
+      $cek = mysqli_num_rows($query);                                                                                                                                                                                                                 
+
+      if ($cek > 0){
+            $no = 1;
+            while($data = mysqli_fetch_array($query)){
+            ?>
+              <tr>
+                <td><?= $no++ ?></td>
+                <td><?= $data['kode_inventaris']?></td>
+                <td><?= $data['nama']?></td>
+                <td><?= $data['kondisi']?></td>
+                <td><?= $data['jumlah']?></td>
+                <td><?= $data['nama_ruang']?></td>
+                <td><?= $data['tanggal_register']?></td>
+                <td><?= $data['keterangan']?></td>
+                <td>
                 <a href="?p=edit_barang" class="btn btn-md btn-primary"><span class="glyphicon glyphicon-edit"></span></a>
                 <a href="" class="btn btn-md btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
-            </td>
-        </tr>
+                </td>
+              </tr>
+            <?php
+            }
+      }
+    ?>
+
     </tbody>
 </table>
 

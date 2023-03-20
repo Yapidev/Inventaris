@@ -1,5 +1,10 @@
 <?php
+  session_start();
   include"config/koneksi.php";
+  if (!empty($_SESSION['username'])){
+    $user = $_SESSION['username'];
+    $level = $_SESSION['level'];
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,19 +52,43 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="?p=list_barang">Daftar Inventaris</a></li>
-            <li><a href="?p=peminjaman">Peminjaman</a></li>
-            <li><a href="?p=pengembalian">Pengembalian</a></li>
-            <li><a href="?p=laporan">Laporan</a></li>
-            
-              </ul>
-            </li>
+            <?php
+              if (@$level == '1'){
+            ?>
+              <li><a href="?p=list_barang">Daftar Inventaris</a></li>
+              <li><a href="?p=peminjaman">Peminjaman</a></li>
+              <li><a href="?p=pengembalian">Pengembalian</a></li>
+              <li><a href="?p=laporan">Laporan</a></li>
+            <?php
+              }
+            ?>
+            <?php
+              if (@$level == '2'){
+            ?>
+               <li><a href="?p=peminjaman">Peminjaman</a></li>
+              <li><a href="?p=pengembalian">Pengembalian</a></li>
+            <?php
+              }
+            ?>
+            <?php
+              if (@$level == '3'){
+            ?>
+               <li><a href="?p=peminjaman">Peminjaman</a></li>
+            <?php
+              }
+            ?>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin (admin) <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-              <li><a href="#">Keluar</a></li>
+            <?php
+              if(!empty($user)){
+            ?>
+              <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?= $user ?> <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+            <li><a href="page/keluar.php">Keluar</a></li>
+            <?php
+              }
+            ?>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -69,8 +98,13 @@
 
       <!-- Main component for a primary marketing message or call to action -->
       <?php
+        
+        if (!empty($_SESSION['username'])){
+            $user = $_SESSION['username'];
+
         @$p = $_GET['p'];
         switch ($p) {
+
           case 'login':
                 include "page/login.php";
                 break;
@@ -103,9 +137,16 @@
                 include "page/laporan.php";
                 break;
 
+          case 'home':
+                include "page/home.php";
+                break;
+
           default:
                 include "page/login.php";
                 break;
+        }
+        }else{
+          include "page/login.php";
         }
       ?>
 

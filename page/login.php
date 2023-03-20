@@ -1,3 +1,12 @@
+<?php
+  if (!empty($user)){
+?>
+  <script type="text/javascript">
+    window.location.href = ("?p=home");
+  </script>
+<?php
+  }
+?>
 <style>
   body {
   padding-top: 40px;
@@ -65,10 +74,34 @@
     $query = mysqli_query($koneksi, $sql);
     $cek = mysqli_num_rows($query);
 
-    if(cek > 0){
-      $data = mysqli_fetch_array($query);
-      $password = $password;
-      echo $password;
+    if ($cek > 0){
+        $data = mysqli_fetch_array($query);
+        $password = $password;
+        $pass_db = $data['password'];
+
+        if ($password == $pass_db){
+            $_SESSION['username'] = $username;
+            $_SESSION['level'] = $data['id_level'];
+            ?>
+              <script type="text/javascript">
+                window.location.href="?p=home";
+              </script>
+            <?php
+        }else{
+          ?>
+            <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Gagal</strong> Maaf, password yang anda masukan salah
+        </div>
+      <?php
+        }
+        }else{
+          ?>
+            <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Gagal</strong> Maaf, username atau password yang anda masukan salah
+        </div>
+      <?php
     }
   }
 ?>
