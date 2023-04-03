@@ -1,26 +1,30 @@
 <?php
-$hari_ini = date('Y-m-d');
-?>
+include "../config/koneksi.php";
 
-<div class="col-lg-12">
-    <div class="panel panel-primary">
-        <div class="panel-heading">Laporan Peminjaman Inventaris</div>
-        <div class="panel-body">
-            <form action="" class="form-inline">
-                <input type="hidden" name="p" value="laporan">
-                <div class="form-group">
-                    <label for="">Tanggal Awal</label><br>
-                    <input type="date" id="tgl_awal" name="tglDari" class="form-control" value="<?= !empty($_GET['tglDari']) ? $_GET['tglDari'] : $hari_ini ?>">
-                </div>
-                <div class="form-group">
-                    <label for="">Tanggal Sampai</label><br>
-                    <input type="date" id="tgl_sampai" name="tglSampai" class="form-control" value="<?= !empty($_GET['tglSampai']) ? $_GET['tglSampai'] : $hari_ini ?>">
-                </div>
-                <div class="form-group"><br>
-                    <input type="submit" class="btn btn-primary btn-sm" value="Filter" name="cari">
-                    <button class="btn btn-sm btn-success" id="cetak">Cetak Laporan</button>
-                </div>
-            </form>
+@$tgl_awal = $_GET['tgl_awal'];
+@$tgl_sampai = $_GET['tgl_sampai'];
+$hari_ini = date('y-m-d');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Laporan</title>
+    <link rel="stylesheet" href="../dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="row">
+        <div class="col-lg-6" style="margin:0 auto; float:none">
+            <center>
+                <h2>Laporan Peminjaman</h2>
+                <p>Periode : <?= date('d-m-y', strtotime($tgl_awal)) ?> 
+                            <b>s/d</b> 
+                            <?= date('d-m-y', strtotime($tgl_sampai)) ?></p>
+            </center>
+            <hr>
+            <br>
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -35,18 +39,18 @@ $hari_ini = date('Y-m-d');
                 <tbody>
                 <?php
                     $cari = '';
-                    @$tglDari = $_GET['tglDari'];
-                    @$tglSampai = $_GET['tglSampai'];
+                    @$tgl_awal = $_GET['tgl_awal'];
+                    @$tgl_sampai = $_GET['tgl_sampai'];
 
-                    if (!empty($tglDari)) {
-                        $cari .= "and tanggal_pinjam >='" . $tglDari . "'";
+                    if (!empty($tgl_awal)) {
+                        $cari .= "and tanggal_pinjam >='" . $tgl_awal . "'";
                     }
-                    if (!empty($tglSampai)) {
-                        $cari .= "and tanggal_pinjam <='" . $tglSampai . "'";
+                    if (!empty($tgl_sampai)) {
+                        $cari .= "and tanggal_pinjam <='" . $tgl_sampai . "'";
                     }
 
-                    // if (empty($tglDari) && empty($tglSampai)) {
-                    //     $cari .= "and tanggal_pinjam >='" . $hari_ini . "' and tanggal_pinjam >= '" . $hari_ini . "'";
+                    // if (empty($tgl_awal) && empty($tgl_sampai)) {
+                    //     $cari .= "and tanggal_pinjam >='" . $hari_ini . "' and tanggal_pinjam <= '" . $hari_ini . "'";
                     // }
 
                     $sql = "SELECT *, detail_pinjam.jumlah as jml FROM detail_pinjam LEFT JOIN peminjaman ON peminjaman.id_peminjaman = detail_pinjam.id_peminjaman LEFT JOIN inventaris on inventaris.id_inventaris = detail_pinjam.id_inventaris LEFT JOIN pegawai ON pegawai.id_pegawai = peminjaman.id_pegawai WHERE 1=1 $cari";
@@ -80,4 +84,8 @@ $hari_ini = date('Y-m-d');
             </table>
         </div>
     </div>
-</div>
+</body>
+</html>
+<script type="text/javascript">
+    window.print();
+</script>
